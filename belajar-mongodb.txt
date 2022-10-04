@@ -1,0 +1,660 @@
+--Pengenalan MongoDB
+Pengenalan MongoDB
+MongoDB merupakan free dan opensource database management system
+MongoDB merupakan database management system berbasis document 
+Dikembangkan oleh perusahaan bernama 10gen tahun 2007
+Dirilis ke public tahun 2009
+Saat ini perusahaan 10gen sudah berganti nama menjadi MongoDB Inc
+MongoDB hampir mendukung semua bahasa pemrograman sebagai client nya
+MongoDB tidak menggunakan SQL, namun menggunakan JavaScript sebagai bahasa utama untuk manipulasi document
+https://github.com/mongodb/mongo 
+
+db-engines.com/en/ranking/document+store
+
+Apa itu Document Oriented Database
+
+Istilah Relational DB vs Document DB
+ Relational DB
+Document DB (MongoDB)
+Database
+Database
+Table
+Collection
+Column
+Field
+Row, Record
+Document (JSON, XML, dan lain-lain)
+Join Table
+Embedded Document, Reference
+SQL
+JavaScript (MongoDB)
+
+--Menginstall MongoDB
+Menginstall MongoDB
+Linux : https://docs.mongodb.com/manual/administration/install-on-linux/
+Mac : https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/
+Windows : https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+
+Menginstall MongoDB Menggunakan Docker
+MongoDB Docker Image : https://hub.docker.com/_/mongo
+Docker Compose : https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/mongodb/docker-compose.yml
+
+--MongoDB Client
+Mongo Shell
+MongoDB menyediakan aplikasi mongo client berupa command line interface untuk terkoneksi ke MongoDB Server dengan nama mongo shell.
+Mongo shell sangat bermanfaat saat kita tidak harus konek ke mongo server tanpa GUI
+Mongo shell menggunakan bahasa pemrograman JavaScript
+
+Menggunakan Mongo Shell
+mongo --host localhost --port 27017
+
+MongoDB GUI Client
+Jika kita terbiasa menggunakan GUI, ada beberapa aplikasi yang bisa kita gunakan sebagai mongo client, seperti :
+MongoDB Compass : https://www.mongodb.com/products/compass
+JetBrains DataGrip : https://www.jetbrains.com/datagrip/
+MongoDB for Visual Studio Code : https://marketplace.visualstudio.com/items?itemName=mongodb.mongodb-vscode
+Robo 3T : https://robomongo.org/
+
+masuk ke container mongo 
+docker exec -it mongo /bin/sh  
+mongo
+
+--Database
+Database
+Database adalah tempat menyimpan collection 
+Semua collection harus disimpan di database
+Biasanya database digunakan untuk memisahkan data secara logical per aplikasi, artinya biasanya satu aplikasi akan memiliki satu database
+Jarang sekali kita akan menggunakan satu database untuk beberapa aplikasi
+
+Membuat Database
+Kita tidak perlu secara eksplisit membuat database
+MongoDB akan secara otomatis membuatkan database sesuai dengan nama database yang kita pilih
+Untuk memilih nama database, kita bisa menggunakan perintah “use” diikuti nama database
+
+Memilih Database
+> use belajar
+> show databases
+
+Database Methods
+ Database Methods
+Keterangan
+db.dropDatabase()
+Menghapus database
+db.getName()
+Mengambil nama database
+db.hostInfo()
+Mengambil informasi host tempat mongodb
+db.version()
+Mengambil versi database
+db.stats()
+Mengambil statistik penggunaan database
+
+--Collection
+Collection
+Collection adalah tempat menyimpan document
+Maximum per document yang bisa disimpan adalah 16MB
+Maximum level nested document yang bisa disimpan adalah 100 level 
+
+Database Methods untuk Collection
+ Database Methods untuk Collection
+Keterangan
+db.getCollectionNames()
+Mengambil semua nama collection
+db.createCollection(name)
+Membuat collection baru
+db.getCollection(name)
+Mendapatkan object collection
+db.<name>
+Sama dengan db.getCollection(<name>)
+db.getCollectionInfos()
+Mendapat informasi semua collection
+
+Collection Methods
+ Database Methods untuk Collection
+Keterangan
+db.<collection>.find()
+Mengambil semua document 
+db.<collection>.count()
+Mengambil jumlah document
+db.<collection>.drop()
+Menghapus collection
+db.<collection>.totalSize()
+Mengambil total ukuran collection
+db.<collection>.stats()
+Mengambil informasi statistik collection
+
+Kode Program : Collection
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/collection.js
+// Membuat Collection customers
+db.createCollection('customers');
+
+// Membuat Collection products
+db.createCollection('products');
+
+// Membuat Collection orders
+db.createCollection('orders');
+
+--Data Model
+Kenapa Perlu Mengerti Data Modeling
+Pindah dari relational database ke document database bukanlah hal yang sesederhana hanya dengan memindahkan semua table ke collection
+Penggunaan document database tidak akan mendatangkan manfaat besar jika kita tidak mengerti cara memodelkan data untuk kebutuhan aplikasi kita
+Saat memodelkan data menggunakan relational database, biasanya kita mengacu ke database normalization 
+Saat memodelkan data menggunakan document database, kita harus mengacu ke penggunaan aplikasi dalam melakukan query, update dan memproses data
+
+Schema yang Flexible
+Tidak seperti di relational database, di MongoDB kita bisa memasukkan data ke collection secara langsung tanpa mendefinisikan schema collection nya.
+Schema untuk collection di MongoDB sangat flexible, tiap document bisa berbeda. Tidak seperti table di relational database yang harus sama  tiap record.
+Namun pada prakteknya, sangat direkomendasikan menggunakan jenis data yang sama untuk tiap collection, walaupun bisa berbeda-beda di collection yang sama
+
+Primary Key
+Saat membuat dokumen di MongoDB, kita wajib menambahkan primary key
+Tidak seperti relational database yang bebas membuat column untuk primary key, di MongoDB, primary key wajib menggunakan field _id
+Selain itu primary key tidak bisa lebih dari 1 field, hanya bisa field _id, jadi jika kita ingin membuat composite primary key, maka kita hanya bisa melakukan dengan menggunakan 1 field _id
+
+Struktur Dokumen - Embedded
+
+Struktur Dokumen - Reference
+
+Embedded vs Reference
+Gunakan Embedded jika :
+Antar document saling ketergantungan
+Tidak bisa langsung melakukan perubahan ke embedded document
+Embedded document selalu dibutuhkan ketika mengambil data document
+
+Gunakan Reference jika :
+Antar document bisa berdiri sendiri dan tidak terlalu ketergantungan satu sama lain
+Bisa melakukan manipulasi data langsung terhadap reference document
+Reference document tidak selalu dibutuhkan saat mengambil document
+
+--BSON
+BSON
+BSON singkatan dari Binary JSON, yaitu binary-encoded serialization dokumen seperti JSON
+Sama seperti JSON, di BSON juga bisa kita bisa menggunakan embedded object, array dan lain-lain
+http://bsonspec.org/ 
+https://docs.mongodb.com/manual/reference/bson-types/ 
+
+Tipe Data di BSON (1)
+ Tipe Data
+Alias
+Double
+double
+String
+string
+Object
+object
+Array
+arrat
+Binary Data
+binData
+ObjectId
+objectId
+
+Tipe Data di BSON (2)
+ Tipe Data
+Alias
+Boolean
+bool
+Date
+date
+Null
+null
+Regular Expression
+regex
+JavaScript
+javascript
+JavaScript with Scope
+javascriptWithScope
+
+Tipe Data di BSON (3)
+ Tipe Data
+Alias
+32 Bit Integer
+int
+Timestamp
+timestamp
+64 Bit Integer
+long
+Decimal 128
+decimal
+Min Key
+minKey
+Max key
+maxKey
+
+ObjectId
+ObjectId adalah random data yang unik, cepat untuk digenerate dan terurut.
+Nilai ObjectId memiliki ukuran panjang 12 byte, konsisten terdiri dari informasi 4 byte timestamp, 5 byte random value, dan 3 byte incrementing counter
+ObjectId digunakan sebagai sebagai default _id (primary key) di document jika kita tidak secara eksplisit menyebutkan _id document nya
+
+Date dan ISODate
+BSON Date adalah 64 bit integer yang merepresentasikan angka milisecond sejak Unix epoch (1 Januari 1970).
+Nilai ini bisa merepresentasikan waktu dengan jarak 290 juta tahun sebelum dan setelah unix epoch.
+ISODate merupakan representasi waktu yang digunakan oleh MongoDB
+Date ini kompatibel dengan Date di JavaScript
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date 
+
+--Insert Document
+Insert Document
+Untuk menyimpan data ke MongoDB, kita perlu membuat document dalam bentuk JSON
+Field _id tidak wajib dimasukkan, jika kita tidak memasukkan field _id, maka secara otomatis MongoDB akan membuat _id baru secara random dengan tipe data ObjectId
+Atau kita juga bisa secara eksplisit membuat ObjectId baru dengan menggunakan perintah “new ObjectId()”
+
+Insert Document Function
+ Function
+Keterangan
+db.<collection>.insertOne(document)
+Menambah dokumen ke collection
+db.<collection>.insertMany(array<document>)
+Menambah semua dokumen di array ke collection 
+db.<collection>.insert(document / array)
+Menambah satu document atau banyak dokumen
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/insert.js
+// Insert document customers
+db.customers.insertOne({
+    _id: "khannedy",
+    name: "Eko Kurniawan Khannedy"
+});
+
+// Insert document products
+db.products.insertMany([
+    {
+        _id: 1,
+        name: "Indomie Ayam Bawang",
+        price: new NumberLong(2000)
+    },
+    {
+        _id: 2,
+        name: "Mie Sedap",
+        price: new NumberLong(2000)
+    }
+]);
+
+// Insert document orders
+db.orders.insertOne({
+    _id: new ObjectId(),
+    total: new NumberLong(8000),
+    items: [
+        {
+            product_id: 1,
+            price: new NumberLong(2000),
+            quantity: new NumberInt(2)
+        },
+        {
+            product_id: 2,
+            price: new NumberLong(2000),
+            quantity: new NumberInt(2)
+        }
+    ]
+})
+
+--Query Document
+Query Document
+Sama seperti di relational database, di MongoDB pun kita bisa melakukan query atau pencarian document yang sudah kita simpan di collection
+
+Query Document Function
+ Function
+Keterangan
+db.<collection>.find(query)
+Mencari document dengan query
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query.js
+// select *  from customers where _id = 'khannedy'
+db.customers.find({
+    _id: "khannedy"
+});
+
+// select * from customers where name = 'Eko Kurniawan Khannedy'
+db.customers.find({
+    name: "Eko Kurniawan Khannedy"
+});
+
+// select * from products where price = 2000
+db.products.find({
+    price: 2000
+});
+
+// select * from orders where items.product_id = 1
+db.orders.find({
+    "items.product_id": 1
+});
+
+--Comparison Query Operator
+Comparison Operator (1)
+ Operator
+Keterangan
+$eq
+Membandingkan value dengan value lain
+$gt
+Membandingkan value lebih besar dari value lain
+$gte
+Membandingkan value lebih besar atau sama dengan value lain
+$lt
+Membandingkan value lebih kecil dari value lain
+$lte
+Membandingkan value lebih kecil atau sama dengan value lain
+
+Comparison Operator (2)
+ Operator
+Keterangan
+$in
+Membandingkan value dengan value yang ada di array
+$nin
+Membandingkan value tidak ada dalam value yang ada di array
+$ne
+Membandingkan value tidak sama dengan value lain
+
+Syntax Comparison Operator
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query-comparison.js
+// select * from customers where _id = 'khannedy'
+db.customers.find({
+    _id: {
+        $eq: "khannedy"
+    }
+});
+
+// select * from products where price > 1000
+db.products.find({
+    price: {
+        $gt: 1000
+    }
+});
+
+// insert product documents
+db.products.insertMany([
+    {
+        _id: 3,
+        name: "Pop Mie Rasa Bakso",
+        price: new NumberLong(2500),
+        category: "food"
+    },
+    {
+        _id: 4,
+        name: "Samsung Galaxy S9+",
+        price: new NumberLong(10000000),
+        category: "handphone"
+    },
+    {
+        _id: 5,
+        name: "Acer Precator XXI",
+        price: new NumberLong(25000000),
+        category: "laptop"
+    }
+]);
+
+// select * from products where category in ('handphone', 'laptop') and price > 5000000
+db.products.find({
+    category: {
+        $in: ["handphone", "laptop"]
+    },
+    price: {
+        $gt: 5000000
+    }
+});
+
+--Logical Query Operator
+Logical Operator
+ Operator
+Keterangan
+$and
+Menggabungkan query dengan operasi AND, mengembalikan document jika semua kondisi benar
+$or
+Menggabungkan query dengan operasi OR, mengembalikan document jika salah satu kondisi benar
+$nor
+Menggabungkan query dengan operasi NOR, mengembalikan document yang gagal di semua kondisi
+$not
+Membalikkan kondisi, mengembalikan document yang tidak sesuai kondisi
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query-logical.js
+// select * from products where category in ('laptop', 'handphone') and price > 20000000
+db.products.find({
+    $and: [
+        {
+            category: {
+                $in: ["laptop", "handphone"]
+            }
+        },
+        {
+            price: {
+                $gt: 20000000
+            }
+        }
+    ]
+});
+
+// select * from products where category not in ('laptop', 'handphone')
+db.products.find({
+    category: {
+        $not: {
+            $in: ["laptop", "handphone"]
+        }
+    }
+});
+
+// select * from products where price between 10000000 and 20000000 and category != 'food'
+db.products.find({
+    $and: [
+        {
+            price: {
+                $gte: 10000000,
+                $lte: 20000000
+            }
+        },
+        {
+            category: {
+                $ne: 'food'
+            }
+        }
+    ]
+});
+
+--Element Query Operator
+Element Operator
+ Operator
+Keterangan
+$exists
+Mencocokkan document yang memiliki field tersebut
+$type
+Mencocokkan document yang memiliki type field tersebut
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query-element.js
+// select * from products where category is null
+db.products.find({
+    category: {
+        $exists: false
+    }
+});
+
+// select * from products where type(category) = "string"
+db.products.find({
+    category: {
+        $type: "string"
+    }
+});
+
+// select * from products where type(price) in ("int", "long")
+db.products.find({
+    price: {
+        $type: ["int", "long"]
+    }
+});
+
+--Evaluation Query Operator
+Evaluation Operator
+ Operator
+Keterangan
+$expr
+Menggunakan aggregation operation
+$jsonSchema
+Validasi document sesuai dengan JSON schema
+$mod
+Melakukan operasi modulo 
+$regex
+Mengambil document sesuai dengan regular expression (PCRE)
+$text
+Melakukan pencarian menggunakan text
+$where
+Mengambil document dengan JavaScript Function
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query-evaluation.js
+// select * from products where price > 1000000
+db.products.find({
+    $expr: {
+        $gt: ["$price", 1000000]
+    }
+});
+
+// select * from customers where toUpper(_id) = 'KHANNEDY'
+db.customers.find({
+    $expr: {
+        $eq: [
+            { $toUpper: "$_id" }, 
+            "KHANNEDY"
+        ]
+    }
+});
+
+// select * from products where name is not null and category is not null
+db.products.find({
+    $jsonSchema: {
+        required: [ "name", "category"]
+    }
+});
+
+// select * from products where name is not null and type(name) = 'string' and type(price) = 'long'
+db.products.find({
+    $jsonSchema: {
+        required: [ "name"],
+        properties: {
+            name: {
+                bsonType: "string"
+            },
+            price: {
+                bsonType: "long"
+            }
+        }
+    }
+});
+
+// select * from products where price % 5 = 0
+db.products.find({ 
+    price: { 
+        $mod: [5, 0]
+    } 
+});
+
+// select * from products where name like "%mie%"
+db.products.find({
+    name: {
+        $regex: /mie/,
+        $options: "i"
+    }
+});
+
+// select * from products where name like "Mie%"
+db.products.find({
+    name: {
+        $regex: /^Mie/
+    }
+});
+
+// create text index on products
+db.products.createIndex({
+    name: "text"
+});
+
+// select * from products where (name like "%mie%" or name like "%sedap%")
+db.products.find({
+    $text: {
+        $search: "mie sedap"
+    }
+});
+
+// select * from products where name like "%mie sedap%"
+db.products.find({
+    $text: {
+        $search: '"mie sedap"'
+    }
+});
+
+// select * fro customers where _id = "khannedy"
+db.customers.find({
+    $where: function(){
+        return this._id == "khannedy";
+    }
+});
+
+--Array Query Operator
+Array Operator
+ Operator
+Keterangan
+$all
+Mencocokkan array yang mengandung elemen-elemen tertentu
+$elemMatch
+Mengambil document jika tiap element di array memenuhi kondisi tertentu
+$size
+Mengambil document jika ukuran array sesuai 
+
+Kode Program
+https://github.com/ProgrammerZamanNow/belajar-mongodb/blob/master/scripts/query-array.js
+//  insert some products  with tags
+db.products.insertMany([
+    {
+        _id: 6,
+        name: "Logitech M235 Wireless Mouse",
+        price: new NumberLong(175000),
+        category: "laptop",
+        tags: [
+            "logitech", "mouse", "accessories"
+        ]
+    },
+    {
+        _id: 7,
+        name: "Havit Cooler Pad Gaming 5Fan Blue led F2082",
+        price: new NumberLong(200000),
+        category: "laptop",
+        tags: [
+            "cooler", "laptop", "accessories", "fan"
+        ]
+    },
+    {
+        _id: 8,
+        name: "Samsung LC24F390FHEXXD Curved Monitor ",
+        price: new NumberLong(1750000),
+        category: "computer",
+        tags: [
+            "samsung", "monitor", "computer"
+        ]
+    }
+]);
+
+// select * from products where (tags = "samsung" and tags = "monitor")
+db.products.find({
+    tags: {
+        $all: ["samsung", "monitor"]
+    }
+});
+
+// select * from products where tags in ("samsung",  "logitect")
+db.products.find({
+    tags: {
+        $elemMatch: {
+            $in: ["samsung", "logitech"]
+        }
+    }
+});
+
+// select * from products where size(tags) = 3
+db.products.find({
+    tags: {
+        $size: 3
+    }
+});
+
